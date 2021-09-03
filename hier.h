@@ -6,7 +6,7 @@
 extern void h(char *home, uid_t uid, gid_t gid, int mode);
 extern void d(char *home, char *subdir, uid_t uid, gid_t gid, int mode);
 extern void p(char *home, char *fifo, uid_t uid, gid_t gid, int mode);
-extern void c(char *home, char *subdir, char *file, uid_t uid, gid_t gid, int mode);
+extern void c(char *home, char *subdir, char *fromdir, char *file, uid_t uid, gid_t gid, int mode);
 extern void z(char *home, char *file, int len, uid_t uid, gid_t gid, int mode);
 extern void hier(void);
 extern void hier_queue(void);

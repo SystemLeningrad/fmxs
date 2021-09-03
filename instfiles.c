@@ -99,14 +99,17 @@ char outbuf[SUBSTDIO_OUTSIZE];
 substdio ssin;
 substdio ssout;
 
-void c(char *home, char *subdir, char *file, uid_t uid, gid_t gid, int mode)
+void c(char *home, char *subdir, char *fromdir, char *file, uid_t uid, gid_t gid, int mode)
 {
   int fdin;
   int fdout;
   stralloc dh = { 0 };
 
   if (fchdir(fdsourcedir) == -1)
-    strerr_die2sys(111,FATAL,"unable to switch back to source directory: ");
+    strerr_die2sys(111,FATAL,"unable to switch back to top directory: ");
+
+  if (chdir(fromdir) == -1)
+    strerr_die4sys(111,FATAL,"unable to switch back to from directory ",fromdir,": ");
 
   fdin = open_read(file);
   if (fdin == -1) {

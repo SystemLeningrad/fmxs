@@ -55,7 +55,7 @@ void p(char *home, char *fifo, uid_t uid, gid_t gid, int mode)
   perm("",home,"/",fifo,S_IFIFO,uid,gid,mode);
 }
 
-void c(char *home, char *subdir, char *file, uid_t uid, gid_t gid, int mode)
+void c(char *home, char *subdir, char *fromdir, char *file, uid_t uid, gid_t gid, int mode)
 {
   if (chdir(home) == -1)
     strerr_die4sys(111,FATAL,"unable to switch to ",home,": ");

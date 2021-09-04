@@ -44,3 +44,14 @@ notqmail-1.08
 -------------
 No copyright is claimed by the distributors of notqmail for changes from
 netqmail 1.07 to notqmail 1.08.
+
+notqmail-1.08 +Nightmare Mail 0.1
+---------------------------------
+The distributors of Nightmare Mail 0.1 and later versions claim copyright
+over their changes over and above the notqmail 1.08-git source base. The
+license you are granted to use that code may be read in LICENCE.mxf or
+doc/LICENCE.mxf. Producing a digital signature of LICENCE.mxf on behalf
+of the entity you are working for should you redistribute this package
+is not required, but is strongly recommended. Umbrellix (Nightmare Mail) 
+will, on request, sign your signature of the license to confirm that you
+license Nightmare Mail for your downstream.

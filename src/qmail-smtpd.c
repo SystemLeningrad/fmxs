@@ -64,7 +64,7 @@ void smtp_greet(code) char *code;
 }
 void smtp_help(arg) char *arg;
 {
-  out("214 notqmail home page: https://notqmail.org\r\n");
+  out("214 NightmareMail - the Falsix Mail eXchanger Service home page: <https://github.com./SystemLeningrad/fmxs> FMXS is based on notqmail. notqmail home page: <https://notqmail.org>\r\n");
 }
 void smtp_quit(arg) char *arg;
 {

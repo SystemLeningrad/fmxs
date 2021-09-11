@@ -7,14 +7,24 @@
 
 static stralloc cmd = {0};
 
-int commands(ss,c)
-substdio *ss;
-struct commands *c;
-{
+int commands (
+ substdio *ss,
+ struct commands *c
+) {
   unsigned int i;
   char *arg;
 
   for (;;) {
+	/* This isn't very optimized for the modern world.
+	   It's basically a spinlock, only protected from
+       going insane on your CPU by the fact that the
+       socket is blocking.
+
+       Even if we are only handling one socket in smtpd,
+       that was 1997. This is 2021. We aren't doing that
+       anymore. smtpd has to do iauth and, if it's running
+       on the submission port, it has to do SASL too.
+        ~ Amelia */
     if (!stralloc_copys(&cmd,"")) return -1;
 
     for (;;) {

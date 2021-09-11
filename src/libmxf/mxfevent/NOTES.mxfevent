@@ -1,0 +1,14 @@
+ ...:: High level overview
+NightmareMail needs an event loop library. There's nothing sufficiently
+generic to be used by any kind of networked application.
+
+Why does NightmareMail need an event loop library? Surely we already
+have one in qmail-send.c?
+
+Well... qmail-send's event loop is a nightmare of selectitude.
+
+ ...:: What should the interface look like?
+Probably broadly related to iopause, which Laurent Bercot of Skarnet uses
+in his 'skalibs.' Perhaps NightmareMail should be constructed so it can
+be linked against libskarnet, or against libmxfevent, with equal
+functionality.

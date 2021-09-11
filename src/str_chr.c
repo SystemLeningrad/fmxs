@@ -8,6 +8,7 @@ unsigned int str_chr(char *s, int c)
   ch = c;
   t = s;
   for (;;) {
+	// Loop unrolling? Smart Bernstein.
     if (!*t) break; if (*t == ch) break; ++t;
     if (!*t) break; if (*t == ch) break; ++t;
     if (!*t) break; if (*t == ch) break; ++t;

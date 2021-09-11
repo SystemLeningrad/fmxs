@@ -1,7 +1,10 @@
-/var/qmail
+/var/net.umbrellix.mail.mxf
 
-This is the qmail home directory. It must be a local directory, not
-shared among machines. This is where qmail queues all mail messages. 
+This is the mxf home directory. It must be a local directory, not
+shared among machines*. This is where mxf queues all mail messages. 
+
+* Caveat: Binaries can be shared between machines with identical
+operating systems.
 
 The queue (except for bounce message contents) is crashproof, if the
 filesystem guarantees that single-byte writes are atomic and that

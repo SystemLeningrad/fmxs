@@ -64,7 +64,7 @@ void smtp_greet(code) char *code;
 }
 void smtp_help(arg) char *arg;
 {
-  out("214 NightmareMail - the Falsix Mail eXchanger Service home page: <https://github.com./SystemLeningrad/fmxs> FMXS is based on notqmail. notqmail home page: <https://notqmail.org>\r\n");
+  out("214 NightmareMail home page: <https://github.com./SystemLeningrad/mxf> MXF is based on notqmail. notqmail home page: <https://notqmail.org>\r\n");
 }
 void smtp_quit(arg) char *arg;
 {
@@ -300,6 +300,7 @@ int *hops;
   flaginheader = 1;
   pos = 0; flagmaybex = flagmaybey = flagmaybez = 1;
   for (;;) {
+	/* This isn't very optimized -- Amelia B */
     substdio_get(&ssin,&ch,1);
     if (flaginheader) {
       if (pos < 9) {

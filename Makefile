@@ -1425,11 +1425,11 @@ include/qmail.h include/substdio.h include/qsutil.h include/prioq.h include/date
 include/fmtqfn.h include/readsubdir.h include/direntry.h
 	./compile src/qmail-send.c
 
-qmail-send.service: \
-qmail-send.service.in conf-qmail
-	cat qmail-send.service.in \
+mxf-send.service: \
+mxf-send.service.in conf-qmail
+	cat mxf-send.service.in \
 	| sed s}QMAILHOME}"`head -n 1 conf-qmail`"}g \
-	> qmail-send.service
+	> mxf-send.service
 
 qmail-showctl: \
 load src/qmail-showctl.o src/control.o src/open.a src/getln.a src/stralloc.a \

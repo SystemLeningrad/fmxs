@@ -76,6 +76,27 @@ If the environment variable
 .B DATABYTES
 is set, it overrides
 .IR databytes .
+
+.TP 5
+.I dnsbllist
+A list of dnsbl providers that
+.B qmail-smtpd
+checks to identify blacklisted ip addresses.
+
+Exception:
+If the environment variable
+.B DNSBLSKIP
+is set,
+.B qmail-smtpd
+ignores
+.IR dnsbllist ,
+and the dnsbl check is not performed.
+The check is skipped even if some other authentication method succedeed
+and authorized the client to relay (smtp-auth or tls client certificate),
+or if
+.B RELAYCLIENT
+enviromnent variable is set.
+
 .TP 5
 .I localiphost
 Replacement host name for local IP addresses.

@@ -375,3 +375,5 @@ doc/man/forgeries.0
 setup
 include/qtmp.h
 qmail-send.service
+*.orig
+*.rej

@@ -24,6 +24,7 @@
 #include "timeoutread.h"
 #include "timeoutwrite.h"
 #include "commands.h"
+#include "dns.h"
 
 #define MAXHOPS 100
 unsigned int databytes = 0;
@@ -46,14 +47,19 @@ void straynewline() { out("451 See https://cr.yp.to/docs/smtplf.html.\r\n"); flu
 
 void err_bmf() { out("553 sorry, your envelope sender is in my badmailfrom list (#5.7.1)\r\n"); }
 void err_nogateway() { out("553 sorry, that domain isn't in my list of allowed rcpthosts (#5.7.1)\r\n"); }
-void err_unimpl(arg) char *arg; { out("502 unimplemented (#5.5.1)\r\n"); }
+void err_unimpl(char *arg) { out("502 unimplemented (#5.5.1)\r\n"); }
 void err_syntax() { out("555 syntax error (#5.5.4)\r\n"); }
 void err_wantmail() { out("503 MAIL first (#5.5.1)\r\n"); }
 void err_wantrcpt() { out("503 RCPT first (#5.5.1)\r\n"); }
-void err_noop(arg) char *arg; { out("250 ok\r\n"); }
-void err_vrfy(arg) char *arg; { out("252 send some mail, i'll try my best\r\n"); }
+void err_noop(char *arg) { out("250 ok\r\n"); }
+void err_vrfy(char *arg) { out("252 send some mail, i'll try my best\r\n"); }
 void err_qqt() { out("451 qqt failure (#4.3.0)\r\n"); }
-
+void die_dnsbl(char *arg)
+{
+  out("421 your ip is currently blacklisted, try to auth first ("); out(arg); out(")\r\n");
+  flush();
+  _exit(1);
+}
 
 stralloc greeting = {0};
 
@@ -62,11 +68,11 @@ void smtp_greet(code) char *code;
   substdio_puts(&ssout,code);
   substdio_put(&ssout,greeting.s,greeting.len);
 }
-void smtp_help(arg) char *arg;
+void smtp_help(char *arg)
 {
   out("214 NightmareMail home page: <https://github.com./SystemLeningrad/mxf> MXF is based on notqmail. notqmail home page: <https://notqmail.org>\r\n");
 }
-void smtp_quit(arg) char *arg;
+void smtp_quit(char *arg)
 {
   smtp_greet("221 "); out("\r\n"); flush(); _exit(0);
 }
@@ -76,11 +82,12 @@ char *remotehost;
 char *remoteinfo;
 char *local;
 char *relayclient;
+char *dnsblskip;
 
 stralloc helohost = {0};
 char *fakehelo; /* pointer into helohost, or 0 */
 
-void dohelo(arg) char *arg; {
+void dohelo(char *arg) {
   if (!stralloc_copys(&helohost,arg)) die_nomem(); 
   if (!stralloc_0(&helohost)) die_nomem(); 
   fakehelo = case_diffs(remotehost,helohost.s) ? helohost.s : 0;
@@ -126,6 +133,7 @@ void setup()
   if (!remotehost) remotehost = "unknown";
   remoteinfo = env_get("TCPREMOTEINFO");
   relayclient = env_get("RELAYCLIENT");
+  dnsblskip = env_get("DNSBLSKIP");
   dohelo(remotehost);
 }
 
@@ -211,28 +219,70 @@ int addrallowed()
   return r;
 }
 
+int flagdnsbl = 0;
+stralloc dnsblhost = {0};
+
+int dnsblcheck()
+{
+  char *ch;
+  static stralloc dnsblbyte = {0};
+  static stralloc dnsblrev = {0};
+  static ipalloc dnsblip = {0};
+  static stralloc dnsbllist = {0};
+
+  ch = remoteip;
+  if(control_readfile(&dnsbllist,"control/dnsbllist",0) != 1) return 0;
+
+  if (!stralloc_copys(&dnsblrev,"")) return 0;
+  for (;;) {
+    if (!stralloc_copys(&dnsblbyte,"")) return 0;
+    while (ch[0] && (ch[0] != '.')) {
+      if (!stralloc_append(&dnsblbyte,ch)) return 0;
+      ch++;
+    }
+    if (!stralloc_append(&dnsblbyte,".")) return 0;
+    if (!stralloc_cat(&dnsblbyte,&dnsblrev)) return 0;
+    if (!stralloc_copy(&dnsblrev,&dnsblbyte)) return 0;
+
+    if (!ch[0]) break;
+    ch++;
+  }
+
+  flagdnsbl = 1;
+  ch = dnsbllist.s;
+  while (ch < (dnsbllist.s + dnsbllist.len)) {
+    if (!stralloc_copy(&dnsblhost,&dnsblrev)) return 0;
+    if (!stralloc_cats(&dnsblhost,ch)) return 0;
+    if (!stralloc_0(&dnsblhost)) return 0;
+
+    if (!dns_ip(&dnsblip,&dnsblhost)) return 1;
+    while (*ch++);
+  }
+
+  return 0;
+}
 
 int seenmail = 0;
 int flagbarf; /* defined if seenmail */
 stralloc mailfrom = {0};
 stralloc rcptto = {0};
 
-void smtp_helo(arg) char *arg;
+void smtp_helo(char *arg)
 {
   smtp_greet("250 "); out("\r\n");
   seenmail = 0; dohelo(arg);
 }
-void smtp_ehlo(arg) char *arg;
+void smtp_ehlo(char *arg)
 {
   smtp_greet("250-"); out("\r\n250-PIPELINING\r\n250 8BITMIME\r\n");
   seenmail = 0; dohelo(arg);
 }
-void smtp_rset(arg) char *arg;
+void smtp_rset(char *arg)
 {
   seenmail = 0;
   out("250 flushed\r\n");
 }
-void smtp_mail(arg) char *arg;
+void smtp_mail(char *arg)
 {
   if (!addrparse(arg)) { err_syntax(); return; }
   flagbarf = bmfcheck();
@@ -242,7 +292,7 @@ void smtp_mail(arg) char *arg;
   if (!stralloc_0(&mailfrom)) die_nomem();
   out("250 ok\r\n");
 }
-void smtp_rcpt(arg) char *arg; {
+void smtp_rcpt(char *arg) {
   if (!seenmail) { err_wantmail(); return; }
   if (!addrparse(arg)) { err_syntax(); return; }
   if (flagbarf) { err_bmf(); return; }
@@ -253,6 +303,8 @@ void smtp_rcpt(arg) char *arg; {
   }
   else
     if (!addrallowed()) { err_nogateway(); return; }
+  if (!(relayclient || dnsblskip || flagdnsbl))
+    if (dnsblcheck()) die_dnsbl(dnsblhost.s);
   if (!stralloc_cats(&rcptto,"T")) die_nomem();
   if (!stralloc_cats(&rcptto,addr.s)) die_nomem();
   if (!stralloc_0(&rcptto)) die_nomem();
@@ -360,7 +412,7 @@ void acceptmessage(qp) unsigned long qp;
   out("\r\n");
 }
 
-void smtp_data(arg) char *arg; {
+void smtp_data(char *arg) {
   int hops;
   unsigned long qp;
   char *qqx;

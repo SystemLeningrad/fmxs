@@ -1454,13 +1454,13 @@ load src/qmail-smtpd.o src/rcpthosts.o src/commands.o src/timeoutread.o \
 src/timeoutwrite.o src/ip.o src/ipme.o src/ipalloc.o src/control.o src/constmap.o src/received.o \
 src/date822fmt.o src/qmail.o src/cdb.a src/fd.a src/wait.a src/datetime.a src/getln.a \
 src/open.a src/sig.a src/case.a src/env.a src/stralloc.a src/substdio.a src/error.a src/str.a \
-src/fs.a src/auto_qmail.o socket.lib
+src/fs.a src/auto_qmail.o socket.lib src/dns.o
 	./load qmail-smtpd src/rcpthosts.o src/commands.o src/timeoutread.o \
 	src/timeoutwrite.o src/ip.o src/ipme.o src/ipalloc.o src/control.o src/constmap.o \
 	src/received.o src/date822fmt.o src/qmail.o src/cdb.a src/fd.a src/wait.a \
 	src/datetime.a src/getln.a src/open.a src/sig.a src/case.a src/env.a src/stralloc.a \
 	src/substdio.a src/error.a src/str.a src/fs.a src/auto_qmail.o  `cat \
-	socket.lib`
+	socket.lib` src/dns.o
 
 doc/man/qmail-smtpd.0: \
 doc/man/qmail-smtpd.8
@@ -1470,7 +1470,7 @@ compile src/qmail-smtpd.c include/sig.h include/readwrite.h include/stralloc.h i
 include/substdio.h include/alloc.h include/auto_qmail.h include/control.h include/received.h include/constmap.h \
 include/error.h include/ipme.h include/ip.h include/ipalloc.h include/ip.h include/gen_alloc.h include/ip.h include/qmail.h \
 include/substdio.h include/str.h include/fmt.h include/scan.h include/byte.h include/case.h include/env.h include/now.h include/datetime.h \
-include/exit.h include/rcpthosts.h include/timeoutread.h include/timeoutwrite.h include/commands.h
+include/exit.h include/rcpthosts.h include/timeoutread.h include/timeoutwrite.h include/commands.h include/dns.h
 	./compile src/qmail-smtpd.c
 
 qmail-start: \

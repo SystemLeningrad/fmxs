@@ -1454,13 +1454,13 @@ load src/qmail-smtpd.o src/rcpthosts.o src/commands.o src/timeoutread.o \
 src/timeoutwrite.o src/ip.o src/ipme.o src/ipalloc.o src/control.o src/constmap.o src/received.o \
 src/date822fmt.o src/qmail.o src/cdb.a src/fd.a src/wait.a src/datetime.a src/getln.a \
 src/open.a src/sig.a src/case.a src/env.a src/stralloc.a src/substdio.a src/error.a src/str.a \
-src/fs.a src/auto_qmail.o socket.lib src/dns.o
+src/fs.a src/auto_qmail.o socket.lib src/dns.o dns.lib
 	./load qmail-smtpd src/rcpthosts.o src/commands.o src/timeoutread.o \
 	src/timeoutwrite.o src/ip.o src/ipme.o src/ipalloc.o src/control.o src/constmap.o \
 	src/received.o src/date822fmt.o src/qmail.o src/cdb.a src/fd.a src/wait.a \
 	src/datetime.a src/getln.a src/open.a src/sig.a src/case.a src/env.a src/stralloc.a \
 	src/substdio.a src/error.a src/str.a src/fs.a src/auto_qmail.o  `cat \
-	socket.lib` src/dns.o
+	socket.lib` src/dns.o `cat dns.lib`
 
 doc/man/qmail-smtpd.0: \
 doc/man/qmail-smtpd.8

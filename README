@@ -1,0 +1,52 @@
+NIGHTMAREMAIL 0.1.1 RELEASE NOTES
+
+NightmareMail 0.1.1 was rushed out during the early stages of writing a new
+Redo-based build system. You will need to run
+
+   make -f Makefile.legacy
+
+rather than the usual make invocation to build this software.
+
+Other than that, the install process is no different to before:
+
+   ${EDITOR} conf-* #to tweak cc, ld, qmailhome etc for your system
+   make -f Makefile.legacy -j 2 it
+   doas make -f Makefile.legacy setup check
+   (then fix file permissions back up in the source directory)
+
+Check your control files are in good order and restart your queue daemon,
+and you'll be ready to go.
+
+NightmareMail 0.1 and below are insecure as they produce backscatter spam.
+Do not use them on the public Internet. Upgrade right away if you use MXF
+on the public Internet.
+
+Paul Jarc (PRJ)'s realrcptto patch,
+https://code.dogmap.org./qmail/#realrcptto, is incorporated into MXF 0.1.1.
+Paul Jarc placed this patch into the public domain. Thanks Paul! This
+should reduce backscatter spam, which is a problem my friend Lightning
+at Ultradian Club has been experiencing with his mailserver.
+
+NIGHTMAREMAIL 0.1 RELEASE NOTES
+
+As stated in doc/README.mxf, I've obtained a license from the developer of
+qmail-dnsbl. qmail-dnsbl is now a part of MXF. Thanks Fabio! I reproduce
+the text of the email in which he licensed the patch to me below.
+
+   From: Fabio Busatto <censored for privacy>
+   Date: Fri, 3 Sep 2021 14:54:34 +0200
+   Subject: Re: Q. about qmail-dnsbl licensure
+   To: Ellenor Malik <umbrellix net!ellenor>
+
+   Hi Ellenor
+
+   feel free to download, use, modify, and redistribute the qmail-dnsbl
+  patch at your own risk, as it doesn't come with any warranty and it's
+  not actively maintained.
+   I hope this could be useful for your scope.
+
+   Best,
+   Fabio
+
+I interpret this as a rough 3 clause BSD license, but if you're Fabio and
+that's a misinterpretation, I am willing to be corrected.

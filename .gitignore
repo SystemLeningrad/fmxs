@@ -249,6 +249,7 @@ src/received.o
 qmail-qmqpd
 src/qmail-qmtpd.o
 src/rcpthosts.o
+src/realrcptto.o
 qmail-qmtpd
 src/qmail-smtpd.o
 qmail-smtpd

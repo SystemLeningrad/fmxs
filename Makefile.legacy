@@ -1290,11 +1290,13 @@ qmail-qmtpd: \
 load src/qmail-qmtpd.o src/rcpthosts.o src/control.o src/constmap.o src/received.o \
 src/date822fmt.o src/qmail.o src/cdb.a src/fd.a src/wait.a src/datetime.a src/open.a \
 src/getln.a src/sig.a src/case.a src/env.a src/stralloc.a src/substdio.a src/error.a \
-src/str.a src/fs.a src/auto_qmail.o
+src/str.a src/fs.a src/auto_qmail.o src/auto_usera.o src/auto_break.o src/realrcptto.o \
+src/case.a src/stralloc.a src/error.a
 	./load qmail-qmtpd src/rcpthosts.o src/control.o src/constmap.o \
 	src/received.o src/date822fmt.o src/qmail.o src/cdb.a src/fd.a src/wait.a \
 	src/datetime.a src/open.a src/getln.a src/sig.a src/case.a src/env.a src/stralloc.a \
-	src/substdio.a src/error.a src/str.a src/fs.a src/auto_qmail.o
+	src/substdio.a src/error.a src/str.a src/fs.a src/auto_qmail.o \
+	src/auto_usera.o src/auto_break.o src/realrcptto.o src/case.a src/stralloc.a src/error.a
 
 doc/man/qmail-qmtpd.0: \
 doc/man/qmail-qmtpd.8
@@ -1454,13 +1456,15 @@ load src/qmail-smtpd.o src/rcpthosts.o src/commands.o src/timeoutread.o \
 src/timeoutwrite.o src/ip.o src/ipme.o src/ipalloc.o src/control.o src/constmap.o src/received.o \
 src/date822fmt.o src/qmail.o src/cdb.a src/fd.a src/wait.a src/datetime.a src/getln.a \
 src/open.a src/sig.a src/case.a src/env.a src/stralloc.a src/substdio.a src/error.a src/str.a \
-src/fs.a src/auto_qmail.o socket.lib src/dns.o dns.lib
+src/fs.a src/auto_qmail.o socket.lib src/dns.o dns.lib src/auto_usera.o src/auto_break.o src/realrcptto.o \
+src/case.a src/stralloc.a src/error.a
 	./load qmail-smtpd src/rcpthosts.o src/commands.o src/timeoutread.o \
 	src/timeoutwrite.o src/ip.o src/ipme.o src/ipalloc.o src/control.o src/constmap.o \
 	src/received.o src/date822fmt.o src/qmail.o src/cdb.a src/fd.a src/wait.a \
 	src/datetime.a src/getln.a src/open.a src/sig.a src/case.a src/env.a src/stralloc.a \
 	src/substdio.a src/error.a src/str.a src/fs.a src/auto_qmail.o  `cat \
-	socket.lib` src/dns.o `cat dns.lib`
+	socket.lib` src/dns.o `cat dns.lib` src/auto_usera.o src/auto_break.o src/realrcptto.o \
+	src/case.a src/stralloc.a src/error.a
 
 doc/man/qmail-smtpd.0: \
 doc/man/qmail-smtpd.8
@@ -1590,6 +1594,11 @@ src/readsubdir.o: \
 compile src/readsubdir.c include/readsubdir.h include/direntry.h include/fmt.h include/scan.h include/str.h \
 include/auto_split.h
 	./compile src/readsubdir.c
+
+src/realrcptto.o: \
+compile src/realrcptto.c include/auto_break.h include/auto_users.h include/byte.h include/case.h include/cdb.h \
+include/constmap.h include/error.h include/fmt.h include/open.h include/str.h include/stralloc.h include/uint32.h
+	./compile src/realrcptto.c
 
 src/received.o: \
 compile src/received.c include/fmt.h include/qmail.h include/substdio.h include/now.h include/datetime.h \

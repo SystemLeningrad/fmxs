@@ -21,6 +21,7 @@
 #include "now.h"
 #include "exit.h"
 #include "rcpthosts.h"
+#include "realrcptto.h"
 #include "timeoutread.h"
 #include "timeoutwrite.h"
 #include "commands.h"
@@ -51,6 +52,8 @@ void err_unimpl(char *arg) { out("502 unimplemented (#5.5.1)\r\n"); }
 void err_syntax() { out("555 syntax error (#5.5.4)\r\n"); }
 void err_wantmail() { out("503 MAIL first (#5.5.1)\r\n"); }
 void err_wantrcpt() { out("503 RCPT first (#5.5.1)\r\n"); }
+void die_cdb() { out("421 unable to read cdb user database (#4.3.0)\r\n"); flush(); _exit(1); }
+void die_sys() { out("421 unable to read system user database (#4.3.0)\r\n"); flush(); _exit(1); }
 void err_noop(char *arg) { out("250 ok\r\n"); }
 void err_vrfy(char *arg) { out("252 send some mail, i'll try my best\r\n"); }
 void err_qqt() { out("451 qqt failure (#4.3.0)\r\n"); }
@@ -118,7 +121,10 @@ void setup()
   if (bmfok == -1) die_control();
   if (bmfok)
     if (!constmap_init(&mapbmf,bmf.s,bmf.len,0)) die_nomem();
- 
+
+  // manually merged from prj's realrcptto patch
+  realrcptto_init();
+
   if (control_readint(&databytes,"control/databytes") == -1) die_control();
   x = env_get("DATABYTES");
   if (x) { scan_ulong(x,&u); databytes = u; }
@@ -137,6 +143,10 @@ void setup()
   dohelo(remotehost);
 }
 
+extern void realrcptto_init();
+extern void realrcptto_start();
+extern int realrcptto();
+extern int realrcptto_deny();
 
 stralloc addr = {0}; /* will be 0-terminated, if addrparse returns 1 */
 
@@ -290,6 +300,7 @@ void smtp_mail(char *arg)
   if (!stralloc_copys(&rcptto,"")) die_nomem();
   if (!stralloc_copys(&mailfrom,addr.s)) die_nomem();
   if (!stralloc_0(&mailfrom)) die_nomem();
+  realrcptto_start();
   out("250 ok\r\n");
 }
 void smtp_rcpt(char *arg) {
@@ -303,6 +314,10 @@ void smtp_rcpt(char *arg) {
   }
   else
     if (!addrallowed()) { err_nogateway(); return; }
+  if (!realrcptto(addr.s)) {
+    out("550 That user has elected not to receive emails. (#5.1.1)\r\n");
+    return;
+  }
   if (!(relayclient || dnsblskip || flagdnsbl))
     if (dnsblcheck()) die_dnsbl(dnsblhost.s);
   if (!stralloc_cats(&rcptto,"T")) die_nomem();
@@ -419,6 +434,7 @@ void smtp_data(char *arg) {
  
   if (!seenmail) { err_wantmail(); return; }
   if (!rcptto.len) { err_wantrcpt(); return; }
+  if (realrcptto_deny()) { out("554 sorry, no mailbox here by that name. (#5.1.1)\r\n"); return; }
   seenmail = 0;
   if (databytes) bytestooverflow = databytes + 1;
   if (qmail_open(&qqt) == -1) { err_qqt(); return; }

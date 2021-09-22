@@ -1,0 +1,35 @@
+ ...:: Thanks
+Changes to notqmail that make notqmail NightmareMail are licenced to you, the
+user, as termed in doc/LICENSE.mxf. This is similar to the CDDL, except there
+is a resumptibility clause.
+
+Notqmail itself appears to be available under the Unlicense.
+
+ ...:: Upstream patches
+As stated in README.mxf, I've obtained a license from the developer of
+qmail-dnsbl. qmail-dnsbl is a part of MXF. Thanks Fabio Busatto! I
+reproduce the text of the email in which he licensed the patch to me
+below.
+
+   Hi Ellenor
+
+   feel free to download, use, modify, and redistribute the qmail-dnsbl
+  patch at your own risk, as it doesn't come with any warranty and it's
+  not actively maintained.
+   I hope this could be useful for your scope.
+
+   Best,
+   Fabio
+
+I interpret this as a rough 3 clause BSD license, but if you're Fabio and
+that's a misinterpretation, I am willing to be corrected.
+
+Changes to the patch that made it apply to qmail-smtpd.c are licensed as
+termed in LICENSE.mxf - however, they are so minor (filename changes) that
+they most likely aren't copyrightable.
+
+Paul Jarc (PRJ)'s realrcptto patch,
+https://code.dogmap.org./qmail/#realrcptto, is also incorporated into MXF.
+Paul Jarc placed this patch into the public domain. Thanks Paul! This
+should reduce backscatter spam, which is a problem my friend Lightning
+at Ultradian Club has been experiencing with his mailserver.
